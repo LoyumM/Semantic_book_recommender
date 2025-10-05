@@ -12,6 +12,7 @@ import gradio as gr
 load_dotenv()
 
 books = pd.read_csv("books_with_emotions.csv")
+# to give us a better resolution book cover
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
 books["large_thumbnail"] = np.where(
     books["large_thumbnail"].isna(),
@@ -20,7 +21,7 @@ books["large_thumbnail"] = np.where(
 )
 
 raw_documents = TextLoader("tagged_description.txt").load()
-text_splitter = CharacterTextSplitter(separator="\n", chunk_size=0, chunk_overlap=0)
+text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1, chunk_overlap=0)
 documents = text_splitter.split_documents(raw_documents)
 db_books = Chroma.from_documents(documents, OpenAIEmbeddings())
 
