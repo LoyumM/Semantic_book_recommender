@@ -75,13 +75,13 @@ The following data files are required for the application to function:
 
 This screen shows the main search interface and the resulting gallery of recommended books after the user submits a query.
 
-**[main_ui.png]**
+![Main UI Screenshot](main_ui.png)
 
 ### Detailed Book Description View
 
 This screen illustrates the detailed view that appears when a user clicks on any book from the recommendation gallery.
 
-**[book_description.png]**
+![Book Description Screenshot](book_description.png)
 
 ## Code Structure
 
