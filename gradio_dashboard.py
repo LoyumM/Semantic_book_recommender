@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from dotenv import load_dotenv
@@ -20,11 +21,37 @@ books["large_thumbnail"] = np.where(
     books["large_thumbnail"],
 )
 
+# caching the vector db
+PERSIST_DIR = "chroma_db"
+EMBEDDING_FUNCTION = OpenAIEmbeddings()
+
+# Check if the vector store already exists on disk
+if os.path.exists(PERSIST_DIR):
+    print("Loading existing Chroma vector store from disk...")
+    db_books = Chroma(
+        persist_directory=PERSIST_DIR, 
+        embedding_function=EMBEDDING_FUNCTION
+    )
+else:
+    print("Creating new Chroma vector store and saving to disk...")
+    raw_documents = TextLoader("tagged_description.txt", encoding="utf-8").load()
+    text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1, chunk_overlap=0)
+    documents = text_splitter.split_documents(raw_documents)
+    
+    # Create the database and automatically save it to the persist_directory
+    db_books = Chroma.from_documents(
+        documents, 
+        EMBEDDING_FUNCTION, 
+        persist_directory=PERSIST_DIR
+    )
+# caching ends
+
+## without caching
 # raw_documents = TextLoader("tagged_description.txt").load()
-raw_documents = TextLoader("tagged_description.txt", encoding="utf-8").load() # required to run on windows
-text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1, chunk_overlap=0)
-documents = text_splitter.split_documents(raw_documents)
-db_books = Chroma.from_documents(documents, OpenAIEmbeddings())
+# raw_documents = TextLoader("tagged_description.txt", encoding="utf-8").load() # required to run on windows
+# text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1, chunk_overlap=0)
+# documents = text_splitter.split_documents(raw_documents)
+# db_books = Chroma.from_documents(documents, OpenAIEmbeddings())
 
 
 def retrieve_semantic_recommendations(
