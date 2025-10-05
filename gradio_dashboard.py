@@ -20,7 +20,8 @@ books["large_thumbnail"] = np.where(
     books["large_thumbnail"],
 )
 
-raw_documents = TextLoader("tagged_description.txt").load()
+# raw_documents = TextLoader("tagged_description.txt").load()
+raw_documents = TextLoader("tagged_description.txt", encoding="utf-8").load() # required to run on windows
 text_splitter = CharacterTextSplitter(separator="\n", chunk_size=1, chunk_overlap=0)
 documents = text_splitter.split_documents(raw_documents)
 db_books = Chroma.from_documents(documents, OpenAIEmbeddings())
@@ -104,4 +105,4 @@ with gr.Blocks(theme = gr.themes.Glass()) as dashboard:
 
 
 if __name__ == "__main__":
-    dashboard.launch()
+    dashboard.launch(share=True)
